@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automatiza procesos para el sector industrial y de servicios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #14181c;
+    --panel: #1d2328;
+    --panel-2: #242b31;
+    --line: #343c43;
+    --text: #e7e5df;
+    --text-dim: #9aa3ab;
+    --amber: #f0a202;
+    --amber-dim: #c98600;
+    --steel: #5b9aad;
+    --ok: #4caf7d;
+    --danger: #d9634a;
+    --radius: 3px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+  }
+
+  /* fondo tipo plano técnico */
+  .blueprint{
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 42px 42px;
+    opacity: .12;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  a{ color: var(--amber); }
+
+  .wrap{
+    position: relative;
+    z-index: 1;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* HEADER */
+  header{
+    border-bottom: 1px solid var(--line);
+    padding: 28px 0 22px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: .02em;
+    margin-bottom: 18px;
+  }
+  .brand .dot{
+    width: 8px; height: 8px;
+    background: var(--amber);
+    display:inline-block;
+  }
+  h1.title{
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(30px, 6vw, 52px);
+    line-height: 1.05;
+    margin: 0 0 12px;
+    max-width: 18ch;
+    text-transform: none;
+  }
+  .subtitle{
+    color: var(--text-dim);
+    max-width: 56ch;
+    font-size: 15.5px;
+    margin: 0;
+  }
+
+  /* STATS BAR */
+  .stats{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--line);
+    margin-top: 22px;
+  }
+  .stat{
+    padding: 14px 16px;
+    border-right: 1px solid var(--line);
+  }
+  .stat:last-child{ border-right: none; }
+  .stat .num{
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--amber);
+    line-height: 1;
+  }
+  .stat .lbl{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* SECTION LABELS */
+  .section-head{
+    display:flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 46px 0 16px;
+  }
+  .section-head h2{
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .section-head .count{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  /* FORM PANEL */
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 22px;
+    position: relative;
+  }
+  .panel::before{
+    content: '';
+    position:absolute;
+    top:-1px; left:-1px;
+    width: 14px; height: 14px;
+    border-top: 2px solid var(--amber);
+    border-left: 2px solid var(--amber);
+  }
+  .panel::after{
+    content: '';
+    position:absolute;
+    bottom:-1px; right:-1px;
+    width: 14px; height: 14px;
+    border-bottom: 2px solid var(--amber);
+    border-right: 2px solid var(--amber);
+  }
+
+  .field{ margin-bottom: 16px; }
+  .field label{
+    display:block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .row2{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  input[type="text"], select, textarea{
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 10px 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    border-radius: var(--radius);
+  }
+  textarea{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    resize: vertical;
+    min-height: 130px;
+  }
+  input:focus, select:focus, textarea:focus{
+    outline: none;
+    border-color: var(--amber);
+  }
+  input[type="file"]{
+    width: 100%;
+    font-size: 13px;
+    color: var(--text-dim);
+    font-family: 'Inter', sans-serif;
+  }
+  .file-hint{
+    font-size: 11.5px;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+
+  .btn{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    background: var(--amber);
+    color: #1b1400;
+    border: none;
+    padding: 11px 20px;
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: background .15s ease;
+  }
+  .btn:hover{ background: #ffb524; }
+  .btn.secondary{
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--line);
+  }
+  .btn.secondary:hover{ border-color: var(--steel); color: var(--steel); }
+  .btn.danger{
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+  .btn.danger:hover{ background: rgba(217,99,74,.12); }
+
+  .form-actions{
+    display:flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 4px;
+  }
+  .form-msg{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ok);
+  }
+
+  /* PROJECT GRID */
+  .empty{
+    border: 1px dashed var(--line);
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+  .empty .big{
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 18px;
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .card-top{
+    display:flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .card h3{
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.2;
+  }
+  .tag{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--steel);
+    border: 1px solid var(--steel);
+    padding: 2px 7px;
+    white-space: nowrap;
+    border-radius: var(--radius);
+  }
+  .card p.desc{
+    font-size: 13.5px;
+    color: var(--text-dim);
+    margin: 0;
+    flex-grow: 1;
+  }
+  .card-meta{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    border-top: 1px solid var(--line);
+    padding-top: 10px;
+    display:flex;
+    justify-content: space-between;
+  }
+  .card-actions{
+    display:flex;
+    gap: 8px;
+  }
+  .btn.view{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    background: transparent;
+    color: var(--amber);
+    border: 1px solid var(--amber-dim);
+    padding: 7px 12px;
+    cursor: pointer;
+    border-radius: var(--radius);
+    flex-grow: 1;
+  }
+  .btn.view:hover{ background: rgba(240,162,2,.1); }
+
+  /* MODAL - visor de codigo */
+  .modal-bg{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.72);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 26px 16px;
+    z-index: 50;
+    overflow-y: auto;
+  }
+  .modal-bg.open{ display:flex; }
+  .modal{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    max-width: 780px;
+    width: 100%;
+    padding: 0;
+  }
+  .modal-head{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .modal-head h3{
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    margin:0;
+  }
+  .modal-close{
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .modal-close:hover{ color: var(--amber); }
+  .modal-body{ padding: 20px; }
+  .modal-body .desc-full{
+    color: var(--text-dim);
+    font-size: 13.5px;
+    margin-bottom: 16px;
+  }
+  pre.code-view{
+    background: #0f1215;
+    border: 1px solid var(--line);
+    padding: 16px;
+    overflow-x: auto;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #dfe7ea;
+    max-height: 60vh;
+    white-space: pre;
+  }
+  .modal-foot{
+    display:flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  footer{
+    border-top: 1px solid var(--line);
+    margin-top: 50px;
+    padding: 20px 0 40px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+  }
+
+  /* MOBILE */
+  @media (max-width: 680px){
+    .row2{ grid-template-columns: 1fr; }
+    .grid{ grid-template-columns: 1fr; }
+    .stats{ grid-template-columns: 1fr; }
+    .stat{ border-right: none; border-bottom: 1px solid var(--line); }
+    .stat:last-child{ border-bottom: none; }
+    .section-head{ flex-direction: column; align-items: flex-start; gap: 4px; }
+    .modal-bg{ padding: 0; }
+    .modal{ max-width: none; min-height: 100%; }
+  }
+
+  ::-webkit-scrollbar{ width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track{ background: var(--bg); }
+  ::-webkit-scrollbar-thumb{ background: var(--line); }
+</style>
+</head>
+<body>
+
+<div class="blueprint"></div>
+
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="dot"></span>REPOSITORIO DE PROYECTOS</div>
+    <h1 class="title">Automatiza procesos para el sector industrial y de servicios</h1>
+    <p class="subtitle">Carga, organiza y consulta tus proyectos de automatización: scripts, integraciones y soluciones aplicadas a planta, operación y servicio.</p>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="num" id="statTotal">0</div>
+        <div class="lbl">PROYECTOS CARGADOS</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="statLangs">0</div>
+        <div class="lbl">LENGUAJES DISTINTOS</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="statLatest">—</div>
+        <div class="lbl">ÚLTIMA CARGA</div>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="section-head">
+      <h2>Nuevo proyecto</h2>
+    </div>
+
+    <form class="panel" id="projectForm">
+      <div class="field">
+        <label for="pName">Nombre del proyecto</label>
+        <input type="text" id="pName" placeholder="Ej. Control de inventario por sensores" required>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label for="pCategory">Área / categoría</label>
+          <select id="pCategory">
+            <option>Automatización industrial</option>
+            <option>Automatización de servicios</option>
+            <option>Integración de datos</option>
+            <option>Monitoreo y sensores</option>
+            <option>Robótica de procesos (RPA)</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="pLang">Lenguaje</label>
+          <input type="text" id="pLang" placeholder="Ej. Python, JavaScript, PLC..." required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="pDesc">Descripción breve</label>
+        <textarea id="pDesc" style="font-family:'Inter',sans-serif; min-height:70px;" placeholder="¿Qué proceso automatiza y qué problema resuelve?"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="pFile">Subir archivo de código (opcional)</label>
+        <input type="file" id="pFile">
+        <div class="file-hint">También puedes pegar el código directamente abajo. Si subes un archivo, su contenido reemplaza lo escrito.</div>
+      </div>
+
+      <div class="field">
+        <label for="pCode">Código</label>
+        <textarea id="pCode" placeholder="Pega aquí tu código..."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn">Guardar proyecto</button>
+        <span class="form-msg" id="formMsg"></span>
+      </div>
+    </form>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Mis proyectos</h2>
+      <span class="count" id="listCount">0 EN TOTAL</span>
+    </div>
+
+    <div id="emptyState" class="empty">
+      <div class="big">Aún no hay proyectos</div>
+      Carga el primero desde el formulario de arriba.
+    </div>
+
+    <div class="grid" id="projectGrid"></div>
+  </section>
+
+  <footer>
+    Los proyectos se guardan en este navegador (almacenamiento local). Si cambias de dispositivo o navegador, no estarán disponibles.
+  </footer>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">Proyecto</h3>
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="desc-full" id="modalDesc"></p>
+      <pre class="code-view" id="modalCode"></pre>
+    </div>
+    <div class="modal-foot">
+      <button class="btn secondary" id="copyCodeBtn">Copiar código</button>
+      <button class="btn danger" id="deleteBtn">Eliminar proyecto</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'procesos_industriales_proyectos';
+  let projects = [];
+  let activeId = null;
+
+  function loadProjects(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      projects = raw ? JSON.parse(raw) : [];
+    }catch(e){
+      projects = [];
+    }
+  }
+
+  function saveProjects(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+  }
+
+  function escapeHtml(str){
+    return str.replace(/[&<>"']/g, m => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[m]));
+  }
+
+  function formatDate(iso){
+    const d = new Date(iso);
+    return d.toLocaleDateString('es-ES', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  function renderStats(){
+    document.getElementById('statTotal').textContent = projects.length;
+    const langs = new Set(projects.map(p => p.lang.trim().toLowerCase()).filter(Boolean));
+    document.getElementById('statLangs').textContent = langs.size;
+    if(projects.length){
+      const latest = [...projects].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+      document.getElementById('statLatest').textContent = formatDate(latest.createdAt);
+    } else {
+      document.getElementById('statLatest').textContent = '—';
+    }
+  }
+
+  function renderGrid(){
+    const grid = document.getElementById('projectGrid');
+    const empty = document.getElementById('emptyState');
+    document.getElementById('listCount').textContent = projects.length + ' EN TOTAL';
+
+    if(projects.length === 0){
+      grid.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    const sorted = [...projects].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    grid.innerHTML = sorted.map(p => `
+      <div class="card">
+        <div class="card-top">
+          <h3>${escapeHtml(p.name)}</h3>
+          <span class="tag">${escapeHtml(p.lang)}</span>
+        </div>
+        <p class="desc">${escapeHtml(p.desc || 'Sin descripción.')}</p>
+        <div class="card-meta">
+          <span>${escapeHtml(p.category)}</span>
+          <span>${formatDate(p.createdAt)}</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn view" data-id="${p.id}">Ver código</button>
+        </div>
+      </div>
+    `).join('');
+
+    grid.querySelectorAll('.btn.view').forEach(btn => {
+      btn.addEventListener('click', () => openModal(btn.dataset.id));
+    });
+  }
+
+  function render(){
+    renderStats();
+    renderGrid();
+  }
+
+  function openModal(id){
+    const p = projects.find(x => x.id === id);
+    if(!p) return;
+    activeId = id;
+    document.getElementById('modalTitle').textContent = p.name;
+    document.getElementById('modalDesc').textContent = p.desc || 'Sin descripción.';
+    document.getElementById('modalCode').textContent = p.code || '// Este proyecto no tiene código adjunto.';
+    document.getElementById('modalBg').classList.add('open');
+  }
+
+  function closeModal(){
+    document.getElementById('modalBg').classList.remove('open');
+    activeId = null;
+  }
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('modalBg').addEventListener('click', (e) => {
+    if(e.target.id === 'modalBg') closeModal();
+  });
+
+  document.getElementById('copyCodeBtn').addEventListener('click', () => {
+    const text = document.getElementById('modalCode').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copyCodeBtn');
+      const original = btn.textContent;
+      btn.textContent = 'Copiado ✓';
+      setTimeout(() => btn.textContent = original, 1400);
+    });
+  });
+
+  document.getElementById('deleteBtn').addEventListener('click', () => {
+    if(!activeId) return;
+    if(confirm('¿Eliminar este proyecto? Esta acción no se puede deshacer.')){
+      projects = projects.filter(p => p.id !== activeId);
+      saveProjects();
+      render();
+      closeModal();
+    }
+  });
+
+  document.getElementById('pFile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      document.getElementById('pCode').value = ev.target.result;
+      const langInput = document.getElementById('pLang');
+      if(!langInput.value){
+        const ext = file.name.split('.').pop();
+        langInput.value = ext ? ext.toUpperCase() : '';
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  document.getElementById('projectForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('pName').value.trim();
+    const category = document.getElementById('pCategory').value;
+    const lang = document.getElementById('pLang').value.trim();
+    const desc = document.getElementById('pDesc').value.trim();
+    const code = document.getElementById('pCode').value;
+
+    if(!name || !lang){
+      return;
+    }
+
+    const project = {
+      id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+      name, category, lang, desc, code,
+      createdAt: new Date().toISOString()
+    };
+
+    projects.push(project);
+    saveProjects();
+    render();
+
+    e.target.reset();
+    const msg = document.getElementById('formMsg');
+    msg.textContent = 'Proyecto guardado correctamente.';
+    setTimeout(() => msg.textContent = '', 2500);
+  });
+
+  const SEED_ID = 'seed-intro-automatizacion-arduino-iot';
+  const SEED_FLAG = 'procesos_industriales_seed_v2';
+
+  function seedDefaultProject(){
+    if(localStorage.getItem(SEED_FLAG)) return; // ya se intentó antes, respeta si el usuario la borró
+    localStorage.setItem(SEED_FLAG, '1');
+    if(projects.some(p => p.id === SEED_ID)) return;
+
+    const seedContent = `PORTAFOLIO
+========================================================================
+Alumno: Edwin David Navarro Chacón
+Docente: Jordy Chirino Balcázar
+Especialidad: Automatiza procesos para el sector industrial
+
+INTRODUCCION Y AUTOMATIZACION DE PROCESOS INDUSTRIALES Y DE SERVICIOS
+========================================================================
+
+1. HISTORIA DE LA AUTOMATIZACION
+-----------------------------------
+La automatizacion no nace con la electronica moderna, sino mucho antes:
+  - Antiguedad: mecanismos simples como norias y molinos de agua ya
+    "automatizaban" tareas usando fuerza natural en lugar de humana.
+  - Revolucion Industrial (siglo XVIII-XIX): aparecen los primeros
+    reguladores mecanicos, como el regulador centrifugo de Watt, que
+    controlaba automaticamente la velocidad de las maquinas de vapor.
+  - Siglo XX, primera mitad: se desarrollan los sistemas de control
+    electrico y neumatico en fabricas, con reles y temporizadores.
+  - Decada de 1960-1970: nace el PLC (Controlador Logico Programable),
+    que reemplaza los tableros de reles por logica programable,
+    marcando el inicio de la automatizacion industrial moderna.
+  - Decada de 1980-1990: se populariza la microelectronica y los
+    microcontroladores, abaratando la automatizacion a pequeña escala.
+  - Siglo XXI: aparecen el IoT, la robotica colaborativa y la
+    Industria 4.0, donde las maquinas no solo se automatizan sino que
+    se conectan e intercambian datos entre si y con la nube.
+
+2. QUE ES AUTOMATIZAR UN PROCESO (INTRODUCCION)
+---------------------------------------------------
+Automatizar es transferir a un sistema tecnico tareas que antes
+requerian intervencion humana repetitiva: medir, decidir y actuar.
+Todo proceso automatizado tiene tres bloques:
+  - Sensor: mide una variable fisica y la convierte en señal electrica.
+  - Controlador: interpreta la señal segun una logica programada.
+  - Actuador: ejecuta la decision sobre el mundo fisico.
+
+3. EL CICLO DE LA AUTOMATIZACION
+-----------------------------------
+Toda automatizacion funciona como un ciclo continuo de 4 etapas que
+se repiten una y otra vez mientras el sistema esta activo:
+  1. MEDIR: el sensor capta el estado real de una variable
+     (temperatura, presencia, nivel, velocidad, etc).
+  2. PROCESAR/DECIDIR: el controlador compara ese dato contra la
+     condicion o el valor deseado (setpoint) y decide una accion.
+  3. ACTUAR: el actuador ejecuta fisicamente esa decision (enciende
+     un motor, abre una valvula, activa una alarma).
+  4. RETROALIMENTAR (feedback): el sistema vuelve a medir el efecto
+     de su propia accion, cerrando el ciclo y permitiendo que se
+     autocorrija constantemente.
+Este ciclo Medir -> Decidir -> Actuar -> Retroalimentar es la base de
+cualquier automatizacion, sin importar si es industrial o de servicios.
+
+4. VENTAJAS Y DESVENTAJAS DE LA AUTOMATIZACION
+---------------------------------------------------
+Ventajas:
+  - Mayor precision y consistencia en el resultado del proceso.
+  - Reduce errores humanos en tareas repetitivas.
+  - Aumenta la productividad y permite operar de forma continua.
+  - Mejora la seguridad al alejar a las personas de tareas riesgosas.
+  - Genera datos en tiempo real para tomar mejores decisiones.
+
+Desventajas:
+  - Inversion inicial alta en equipos, sensores y desarrollo.
+  - Requiere mantenimiento tecnico especializado.
+  - Puede reducir la necesidad de cierta mano de obra operativa.
+  - Mayor dependencia tecnologica: una falla del sistema puede
+    detener todo el proceso si no hay planes de contingencia.
+  - Curva de aprendizaje para el personal que debe operarla.
+
+5. INDUSTRIAL VS. SERVICIOS
+----------------------------
+Industrial: lineas de produccion, control de maquinas, monitoreo de
+planta. Prioriza precision, seguridad y continuidad operativa.
+Servicios: gestion de citas, atencion al cliente, control de accesos,
+inventario. Prioriza experiencia de usuario y trazabilidad.
+El IoT conecta ambos mundos: un mismo sensor de bajo costo puede
+automatizar una maquina de fabrica o el conteo de clientes en tienda.
+
+6. TIPOS DE AUTOMATIZACION
+----------------------------
+  - Fija: diseñada para una tarea especifica, dificil de modificar.
+  - Programable: reconfigurable, pero requiere detener el proceso.
+  - Flexible: se adapta en tiempo real sin detener el proceso.
+
+7. CONCEPTOS CLAVE
+--------------------
+  - Lazo abierto vs. lazo cerrado: en lazo cerrado el sistema mide
+    el resultado de su propia accion y se autocorrige (feedback).
+  - Señal digital (0/1) vs. analogica (rango continuo de valores).
+  - PWM: simula una señal analogica con pulsos digitales rapidos;
+    controla velocidad de motores o brillo de luces.
+  - Controlador PID: ajusta la accion de forma gradual y precisa
+    (Proporcional-Integral-Derivativo).
+  - PLC vs. microcontrolador: el PLC es robusto para ambientes
+    industriales exigentes; el microcontrolador (Arduino, ESP32) es
+    economico y flexible, ideal para prototipos e IoT.
+  - HMI: interfaz humano-maquina para que un operador vea y controle
+    el proceso.
+  - SCADA: sistema que centraliza datos de muchos controladores
+    distribuidos en una planta.
+
+8. ARDUINO: LA PUERTA DE ENTRADA AL HARDWARE
+-----------------------------------------------
+Plataforma de hardware y software libre para prototipado electronico.
+  - Pines digitales: leen/escriben estados 0/1.
+  - Pines analogicos: leen valores continuos de sensores.
+  - Salidas PWM: controlan motores, servos o intensidad de luz.
+  - Comunicacion: UART (serial), I2C y SPI para sensores y modulos.
+Placas comunes: Arduino Uno, Mega, Nano, y ESP32/ESP8266 (estas
+ultimas con Wi-Fi y Bluetooth integrados, ideales para IoT).
+
+Flujo tipico de un proyecto:
+  1. Se conecta un sensor a un pin.
+  2. El sketch lee ese valor en loop() de forma continua.
+  3. Segun el valor, se activa un actuador.
+  4. Opcionalmente, el valor se envia por serial o por red.
+
+9. IOT: CUANDO LA AUTOMATIZACION SE CONECTA
+-----------------------------------------------
+Arquitectura tipica:
+  1. Dispositivo (Edge): sensor/actuador controlado por un
+     microcontrolador tipo ESP32.
+  2. Conectividad: Wi-Fi, Bluetooth, LoRa (largo alcance, bajo
+     consumo) o redes celulares.
+  3. Nube/servidor: donde se almacenan y procesan los datos
+     (AWS IoT, Google Cloud IoT, ThingSpeak, servidor propio).
+  4. Aplicacion/dashboard: interfaz de visualizacion y control.
+
+Protocolos comunes:
+  - MQTT: ligero, el mas usado en proyectos IoT.
+  - HTTP/HTTPS: mas pesado, compatible con servicios web.
+  - Bluetooth/BLE: comunicacion de corto alcance.
+  - LoRa/LoRaWAN: sensores distribuidos en grandes areas, bajo consumo.
+
+Herramientas para empezar: Node-RED (logica visual), ThingSpeak/Blynk
+(prototipos rapidos con Arduino/ESP32), Home Assistant.
+
+10. EJEMPLO DE FLUJO COMPLETO
+--------------------------------
+Monitoreo de temperatura en una bodega:
+  1. Un sensor DS18B20 se conecta a un ESP32.
+  2. El ESP32 lee la temperatura cada minuto (lazo cerrado).
+  3. Si supera un umbral, activa un rele que enciende un ventilador.
+  4. En paralelo, envia la lectura por Wi-Fi via MQTT a la nube.
+  5. Un dashboard muestra el historico y alerta si algo sale de rango.
+
+11. PROXIMOS PASOS SUGERIDOS
+-------------------------------
+  1. Aprender la sintaxis basica de un sketch (setup/loop, pines).
+  2. Practicar con un sensor y un actuador simple (sin conectividad).
+  3. Introducir un ESP32 y conectarlo a Wi-Fi.
+  4. Enviar una primera lectura a ThingSpeak (MQTT o HTTP).
+  5. Construir un dashboard basico para visualizar los datos.
+  6. Avanzar hacia logica de control mas compleja (PID, alertas).`;
+
+    const seedProject = {
+      id: SEED_ID,
+      name: 'Introducción a la automatización de procesos industriales y de servicios',
+      category: 'Automatización industrial',
+      lang: 'Documentación',
+      desc: 'Alumno: Edwin David Navarro Chacón · Docente: Jordy Chirino Balcázar · Especialidad: Automatiza procesos para el sector industrial. Incluye historia, introducción, conceptos clave, el ciclo de la automatización, ventajas/desventajas y diferencias entre automatización industrial y de servicios, con enfoque en Arduino e IoT.',
+      code: seedContent,
+      createdAt: new Date().toISOString()
+    };
+
+    projects.unshift(seedProject);
+    saveProjects();
+  }
+
+  loadProjects();
+  seedDefaultProject();
+  render();
+</script>
+
+</body>
+</html>
